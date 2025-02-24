@@ -1,3 +1,4 @@
+// Source : https://gist.github.com/jordandee/94b187bcc51df9528a2f
 // To compile with gcc:  (tested on Ubuntu 14.04 64bit):
 //	 g++ sdl2_opengl.cpp -lSDL2 -lGL
 // To compile with msvc: (tested on Windows 7 64bit)
