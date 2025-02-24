@@ -1,37 +1,58 @@
-# Define the C compiler
-CC = g++
+# Compiler
+CXX = g++
 
-# Define the C compiler flags
-CFLAGS = -Wall -Wextra -g
+# Compiler flags
+CXXFLAGS = -std=c++17 -Wall -Wextra -g
 
-#Define Libs
-LIBS = -lSDL2 -lGL -lSDL2_image
+# SDL2 flags
+SDL2_FLAGS = `sdl2-config --cflags`
+SDL2_LIBS = `sdl2-config --libs` -lSDL2 -lGL -lSDL2_image
 
-# Define the object files
-OBJECTS = main.o Vector3.o Transform.o Object.o Sprite.o
+# Directory paths
+SRC_DIR = src
+BUILD_DIR = build
+IGNORE_SOURCES = src/main.cpp
 
-# Define the executable
-EXECUTABLE = out
+# Files
+SOURCES = $(shell find $(SRC_DIR) -name "*.cpp")
+SOURCES_WITHOUT_MAIN := $(filter-out $(IGNORE_SOURCES), $(SOURCES))
+HEADERS = $(wildcard $(SRC_DIR)/*.hpp)
+OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
-BUILD_DIR = build/
-
-SRC_DIR = src/
+# Target executable
+TARGET = $(BUILD_DIR)/myprogram
 
 # Default target
-all: $(EXECUTABLE)
+all: $(TARGET)
 
-# Link the object files to create the executable
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+# Build target
+$(TARGET): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(SDL2_FLAGS) $^ -o $@ $(SDL2_LIBS)
 
-# Compile the source files to create the object files
-%.o: %.cpp
-	$(CC) $(CFLAGS) -c $^ -o $@
+# Build object files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(SDL2_FLAGS) -c $< -o $@
+
+# Run target
+run: $(TARGET)
+	./$(TARGET)
 
 # Clean target
 clean:
-	rm -f $(OBJECTS) $(EXECUTABLE)
+	rm -rf $(BUILD_DIR) $(TARGET)
+# Check headers and sources
+# Check headers and sources
+check:
+	@if [ $(words $(SOURCES_WITHOUT_MAIN)) -ne $(words $(HEADERS)) ]; then \
+		echo "Warning: number of source files does not match number of header files." \
+	; fi
+	@for src in $(SOURCES_WITHOUT_MAIN); do \
+		if [ ! -f "$$(echo "$$src" | sed "s/\.cpp/.hpp/")" ]; then \
+			echo "Error: missing header file for $$src ($$(echo "$$src" | sed "s/\.cpp/.hpp/"))" \
+		; fi \
+	done
 
-# Run target
-run: $(EXECUTABLE)
-	./$(EXECUTABLE)
+
+
+.PHONY: all run clean check
