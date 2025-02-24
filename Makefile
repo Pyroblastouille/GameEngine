@@ -5,13 +5,17 @@ CC = g++
 CFLAGS = -Wall -Wextra -g
 
 #Define Libs
-LIBS = -lSDL2 -lGL
+LIBS = -lSDL2 -lGL -lSDL2_image
 
 # Define the object files
-OBJECTS = main.o
+OBJECTS = main.o Vector3.o Transform.o Object.o Sprite.o
 
 # Define the executable
 EXECUTABLE = out
+
+BUILD_DIR = build/
+
+SRC_DIR = src/
 
 # Default target
 all: $(EXECUTABLE)

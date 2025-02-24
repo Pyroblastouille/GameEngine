@@ -15,16 +15,17 @@ typedef int32_t i32;
 typedef uint32_t u32;
 typedef int32_t b32;
 
-#define WinWidth 1000
-#define WinHeight 1000
+#define WinWidth 800
+#define WinHeight 600
 
-int main (int ArgCount, char **Args)
+int main ()
 {
 
   u32 WindowFlags = SDL_WINDOW_OPENGL;
   SDL_Window *Window = SDL_CreateWindow("OpenGL Test", 0, 0, WinWidth, WinHeight, WindowFlags);
   assert(Window);
   SDL_GLContext Context = SDL_GL_CreateContext(Window);
+  
   
   b32 Running = 1;
   b32 FullScreen = 0;
@@ -67,5 +68,6 @@ int main (int ArgCount, char **Args)
 
     SDL_GL_SwapWindow(Window);
   }
+  SDL_GL_DeleteContext(Context);
   return 0;
 }
